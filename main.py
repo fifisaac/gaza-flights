@@ -10,6 +10,9 @@ def check():
     found = 0
     for i in reg:
         r = requests.get(f'''https://api.adsb.lol/v2/reg/{i}''')
+        if r.status_code != 200:
+            return f'An error occured in the adsb.lol API.', r.status_code
+            ## adsb.lol seems to intermittently return 503 errors. adsb.fi or adsb.one may be an alternative
         rjson = r.json()
         if rjson['ac'] != []:
             found += 1
