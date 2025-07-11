@@ -16,7 +16,8 @@ def check():
         rjson = r.json()
         if rjson['ac'] != []:
             found += 1
-            with open('planes.json', 'w') as o:
+            # Need JSON formatting
+            with open('planes.json', 'a') as o:
                 json.dump({'reg': rjson['ac'][0]['r'], 
                             'lat': rjson['ac'][0]['lat'],
                             'lon': rjson['ac'][0]['lon'],
