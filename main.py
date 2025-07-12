@@ -2,7 +2,7 @@ from flask import Flask
 import requests
 import json
 
-reg = ['5B-DDO'] # 'ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507', 
+reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507']
 bbox = {"gaza": [[34.609, 32.820], [30.929, 34.659]],
         "uk": [[60.479, -10.979], [50.378, 3.515]]}
 
