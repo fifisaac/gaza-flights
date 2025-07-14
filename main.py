@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 import requests
 import json
 
@@ -7,6 +7,17 @@ bbox = {"gaza": [[34.609, 32.820], [30.929, 34.659]],
         "uk": [[60.479, -10.979], [50.378, 3.515]]}
 
 app = Flask(__name__)
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+# Returns the JSON store of data
+@app.route('/raw')
+def raw():
+    with open('planes.json', 'r') as f:
+        return json.load(f)
+
 
 # /check will be pinged every 15 minutes to see which if any planes are currently flying
 # Could be automated to call the function locally instead of accessing /check
@@ -39,8 +50,8 @@ def check():
                     if j >= len(flights):
                         break
                     
-                    # Checks if there is an existing flight with same reg and 16000000 (approx 4.5 hrs)
-                    if (flights[-j]["reg"] == i) and (flights[-j]['locs'][-1]["time"] + 16000000 >= time):
+                    # Checks if there is an existing flight with same reg and within 21000000ms (approx 6hrs)
+                    if (flights[-j]["reg"] == i) and (flights[-j]['locs'][-1]["time"] + 21000000 >= time):
                         newFlight = False
                         flights[-j]['locs'].append({'lat': rjson['ac'][0]['lat'],
                                             'lon': rjson['ac'][0]['lon'],
