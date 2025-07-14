@@ -7,22 +7,29 @@ bbox = {"gaza": [[34.609, 32.820], [30.929, 34.659]],
         "uk": [[60.479, -10.979], [50.378, 3.515]]}
 
 app = Flask(__name__)
+
+# /check will be pinged every 15 minutes to see which if any planes are currently flying
+# Could be automated to call the function locally instead of accessing /check
 @app.route('/check')
 def check():
+
     found = 0
+
     for i in reg:
         r = requests.get(f'''https://api.adsb.lol/v2/reg/{i}''')
 
         if r.status_code != 200:
             return f'An error occured in the adsb.lol API.', r.status_code
-            ## adsb.lol seems to intermittently return 503 errors. adsb.fi or adsb.one may be an alternative
+            ## adsb.lol seems to intermittently return 503 errors. adsb.fi or adsb.one may be alternatives
         
         rjson = r.json()
+
+        # If no plane was found, the 'ac' field will be an empty array
         if rjson['ac'] != []:
             found += 1
 
-            # Need JSON formatting
-            with open('planes.json', 'a+') as o:
+            # Opens to access previous flights
+            with open('planes.json', 'r') as o:
                 o.seek(0)
                 file = json.loads(o.read())
                 flights = file["flights"]
@@ -32,6 +39,7 @@ def check():
                     if j >= len(flights):
                         break
                     
+                    # Checks if there is an existing flight with same reg and 16000000 (approx 4.5 hrs)
                     if (flights[-j]["reg"] == i) and (flights[-j]['locs'][-1]["time"] + 16000000 >= time):
                         newFlight = False
                         flights[-j]['locs'].append({'lat': rjson['ac'][0]['lat'],
@@ -50,7 +58,8 @@ def check():
                                         }
                                         ]
                                     })
-
+            
+            # Re-opens file, this time to write the new data
             with open('planes.json', 'w') as o:
                 json.dump({"flights": flights}, o, indent=4)
 
