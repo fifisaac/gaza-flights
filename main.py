@@ -32,7 +32,7 @@ def check():
                     if j >= len(flights):
                         break
                     
-                    if (flights[-j]["reg"] == i) and (flights[-j]['locs'][-1]["time"] + 12000 <= time):
+                    if (flights[-j]["reg"] == i) and (flights[-j]['locs'][-1]["time"] + 16000000 >= time):
                         newFlight = False
                         flights[-j]['locs'].append({'lat': rjson['ac'][0]['lat'],
                                             'lon': rjson['ac'][0]['lon'],
@@ -51,7 +51,7 @@ def check():
                                         ]
                                     })
 
-            with open('woahplanes.json', 'w') as o:
+            with open('planes.json', 'w') as o:
                 json.dump({"flights": flights}, o, indent=4)
 
     return f'Success: {found} planes found'
