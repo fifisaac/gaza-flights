@@ -3,8 +3,7 @@ import requests
 import json
 
 reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507']
-bbox = {"gaza": [[34.609, 32.820], [30.929, 34.659]],
-        "uk": [[60.479, -10.979], [50.378, 3.515]]}
+bbox = [[34.63, 32.820], [30.92, 34.66]]
 
 app = Flask(__name__)
 
@@ -44,7 +43,12 @@ def check():
                 o.seek(0)
                 file = json.loads(o.read())
                 flights = file["flights"]
+
                 time = rjson['ctime']
+                lat = rjson['ac'][0]['lat']
+                lon = rjson['ac'][0]['lon']
+
+
                 newFlight = True
                 for j in range(1, len(reg)+1):
                     if j >= len(flights):
@@ -59,7 +63,20 @@ def check():
                         break
                         
                 if newFlight:
-                    flights.append({
+                    if (lat <= bbox[0][0] and lat >= bbox[1][0]) and (lon >= bbox[0][1] and lon <= bbox[1][1]):
+                        flights.append({
+                                        "reg": i,
+                                        "locs": [
+                                            {
+                                                "lat": rjson['ac'][0]['lat'],
+                                                "lon": rjson['ac'][0]['lon'],
+                                                "time": time
+                                            }
+                                            ],
+                                        "gaza": True
+                                        })
+                    else:
+                        flights.append({
                                     "reg": i,
                                     "locs": [
                                         {
@@ -67,7 +84,8 @@ def check():
                                             "lon": rjson['ac'][0]['lon'],
                                             "time": time
                                         }
-                                        ]
+                                        ],
+                                    "gaza": False
                                     })
             
             # Re-opens file, this time to write the new data
