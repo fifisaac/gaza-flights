@@ -26,7 +26,7 @@ def check():
     found = 0
 
     for i in reg:
-        r = requests.get(f'''https://api.adsb.lol/v2/reg/{i}''')
+        r = requests.get(f'''https://opendata.adsb.fi/api/v2/registration/{i}''')
 
         if r.status_code != 200:
             return f'An error occured in the adsb.lol API.', r.status_code
@@ -55,7 +55,7 @@ def check():
                         break
                     
                     # Checks if there is an existing flight with same reg and within 21000000ms (approx 6hrs)
-                    if (flights[-j]["reg"] == i) and (flights[-j]['locs'][-1]["time"] + 21000000 >= time):
+                    if (flights[-j]["r"] == i) and (flights[-j]['locs'][-1]["time"] + 21000000 >= time):
                         newFlight = False
                         flights[-j]['locs'].append({'lat': rjson['ac'][0]['lat'],
                                             'lon': rjson['ac'][0]['lon'],
@@ -72,21 +72,8 @@ def check():
                                                 "lon": rjson['ac'][0]['lon'],
                                                 "time": time
                                             }
-                                            ],
-                                        "gaza": True
+                                            ]
                                         })
-                    else:
-                        flights.append({
-                                    "reg": i,
-                                    "locs": [
-                                        {
-                                            "lat": rjson['ac'][0]['lat'],
-                                            "lon": rjson['ac'][0]['lon'],
-                                            "time": time
-                                        }
-                                        ],
-                                    "gaza": False
-                                    })
             
             # Re-opens file, this time to write the new data
             with open('planes.json', 'w') as o:
