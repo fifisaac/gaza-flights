@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import requests
 import json
-import time
+from time import sleep
 
 reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507']
 bbox = [[34.63, 32.820], [30.92, 34.66]]
@@ -81,7 +81,7 @@ def check():
                 json.dump({"flights": flights}, o, indent=4)
         
         # Does this need a thread or async??
-        time.sleep(1)
+        sleep(1)
 
     return f'Success: {found} planes found'
 
