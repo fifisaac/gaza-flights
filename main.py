@@ -1,16 +1,40 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import requests
 import json
 from time import sleep
+import datetime
 
-reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507']
+reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507', 'ZZ173']
 bbox = [[34.63, 32.820], [30.92, 34.66]]
 
 app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+
+    page = request.args.get('pg')
+    if page is None or not page.isdigit():
+        page = 0
+    else:
+        page = int(page)
+
+    with open('planes.json', 'r') as f:
+        f.seek(0)
+        file = json.loads(f.read())
+
+        items = []
+        flights = file["flights"][::-1]
+        for i in flights[(page * 10): (10 + page * 10)]:
+            reg = i['reg']
+            date = datetime.datetime.utcfromtimestamp(i['locs'][0]['time']/1000).strftime('%Y-%m-%d')
+
+            convertTime = lambda time: datetime.datetime.utcfromtimestamp(time/1000).strftime('%Y-%m-%d %H:%M:%S')
+
+            first = [convertTime(i['locs'][0]['time']), f'''{i['locs'][0]['lat']}, {i['locs'][0]['lon']}''']
+            last = [convertTime(i['locs'][-1]['time']), f'''{i['locs'][-1]['lat']}, {i['locs'][-1]['lon']}''']
+            items.append([reg, date, first, last])
+
+        return render_template('index.html', items=items)
 
 # Returns the JSON store of data
 @app.route('/raw')
@@ -54,9 +78,9 @@ def check():
                 for j in range(1, len(reg)+1):
                     if j >= len(flights):
                         break
-                    
+
                     # Checks if there is an existing flight with same reg and within 21000000ms (approx 6hrs)
-                    if (flights[-j]["r"] == i) and (flights[-j]['locs'][-1]["time"] + 21000000 >= time):
+                    if (flights[-j]["reg"] == i) and (flights[-j]['locs'][-1]["time"] + 21000000 >= time):
                         newFlight = False
                         flights[-j]['locs'].append({'lat': rjson['ac'][0]['lat'],
                                             'lon': rjson['ac'][0]['lon'],
