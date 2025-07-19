@@ -34,7 +34,8 @@ def index():
             last = [convertTime(i['locs'][-1]['time']), f'''{i['locs'][-1]['lat']}, {i['locs'][-1]['lon']}''']
             items.append([reg, date, first, last])
 
-        return render_template('index.html', items=items)
+        return render_template('index.html', items=items, page=page, total=(len(flights)//10))
+
 
 # Returns the JSON store of data
 @app.route('/raw')

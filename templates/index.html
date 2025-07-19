@@ -32,7 +32,6 @@
         text-align: right;
         white-space: nowrap;
     }
-
 </style>
 
 <head>
@@ -76,17 +75,25 @@
     {% for item in items %}
 
 
-        <div class="content">
-            <h2>{{item[0]}} - {{item[1]}}</h2>
-            <p>First seen: {{item[2][0]}} at {{item[2][1]}}</p>
-            <p>Last seen: {{item[3][0]}} at {{item[3][1]}}</p>
-        </div>
+    <div class="content">
+        <h2>{{item[0]}} - {{item[1]}}</h2>
+        <p>First seen: {{item[2][0]}} at {{item[2][1]}}</p>
+        <p>Last seen: {{item[3][0]}} at {{item[3][1]}}</p>
+    </div>
 
     {% endfor %}
 
-    
 
-
+    <div class="pages">
+        {% if page == 0 %}
+            <p style="text-align: center;"><a>Prev</a> Page {{page + 1}} of {{total + 1}} <a href="/?pg=1">Next</a></p>
+        {% elif page == total %}
+            <p style="text-align: center;"><a href="/?pg={{page-1}}">Prev</a> Page {{page + 1}} of {{total + 1}} <a>Next</a></p>
+        {% else %}
+            <p style="text-align: center;"><a href="/?pg={{page-1}}">Prev</a> Page {{page + 1}} of {{total + 1}} <a
+                    href="/?pg={{page+1}}">Next</a></p>
+        {% endif %}
+    </div>
 
 </body>
 
