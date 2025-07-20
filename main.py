@@ -26,13 +26,14 @@ def index():
         flights = file["flights"][::-1]
         for i in flights[(page * 10): (10 + page * 10)]:
             reg = i['reg']
+            icao = i['icao']
             date = datetime.datetime.utcfromtimestamp(i['locs'][0]['time']/1000).strftime('%Y-%m-%d')
 
             convertTime = lambda time: datetime.datetime.utcfromtimestamp(time/1000).strftime('%Y-%m-%d %H:%M:%S')
 
             first = [convertTime(i['locs'][0]['time']), f'''{i['locs'][0]['lat']}, {i['locs'][0]['lon']}''']
             last = [convertTime(i['locs'][-1]['time']), f'''{i['locs'][-1]['lat']}, {i['locs'][-1]['lon']}''']
-            items.append([reg, date, first, last])
+            items.append([reg, icao, date, first, last])
 
         return render_template('index.html', items=items, page=page, total=(len(flights)//10))
 
