@@ -92,6 +92,7 @@ def check():
                     if (lat <= bbox[0][0] and lat >= bbox[1][0]) and (lon >= bbox[0][1] and lon <= bbox[1][1]):
                         flights.append({
                                         "reg": i,
+                                        "icao": rjson['ac'][0]['hex'],
                                         "locs": [
                                             {
                                                 "lat": rjson['ac'][0]['lat'],
