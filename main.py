@@ -4,7 +4,7 @@ import json
 from time import sleep
 import datetime
 
-reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507', 'ZZ173']
+reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507']
 bbox = [[34.63, 32.820], [30.92, 34.66]]
 
 app = Flask(__name__)
