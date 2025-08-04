@@ -3,11 +3,29 @@ import requests
 import json
 from time import sleep
 import datetime
+import csv
 
-reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507', 'N6147U']
-bbox = [[34.63, 32.820], [30.92, 34.66]]
+try:
+    with open('reg.csv', 'r') as f:
+        reg = f.read().splitlines()
+except: 
+    raise ValueError('reg.csv does not exist')
+
+
+try: 
+    with open('bbox.csv', 'r') as f:
+        reader = csv.reader(f)
+        bbox = [[], []]
+        i = 0
+        for row in reader:
+            bbox[i] = [float(row[0]), float(row[1])]
+            i += 1
+except:
+    raise ValueError('bbox.csv does not exist')
+        
 
 app = Flask(__name__)
+
 
 # Homepage route
 # Returns 10 items at a time with reg, icao, locations and times
