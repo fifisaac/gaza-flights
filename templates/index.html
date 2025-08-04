@@ -63,7 +63,8 @@
             in
             Gaza. This website aims to automatically collect data on these flights from publicly available sources
             (currently using <a class="inlineanchor" href="https://adsb.fi/">adsb.fi</a>), and
-            compile it in one place. The site has been running consistently since 2025-07-14 and should accurately document all flights since that date.
+            compile it in one place. The site has been running consistently since 2025-07-14 and should accurately
+            document all flights since that date.
         </p>
         <p>
             For more details on the flights:
@@ -80,11 +81,12 @@
     {% for item in items %}
 
 
-    <div class="content">
-        <h2><a href="https://globe.adsb.fi/?icao={{item[1]}}&showTrace={{item[2]}}", target="_blank">{{item[0]}}</a> - {{item[2]}}</h2>
-        <p>First seen: {{item[3][0]}} UTC at {{item[3][1]}}</p>
-        <p>Last seen: {{item[4][0]}} UTC at {{item[4][1]}}</p>
-    </div>
+        <div class="content">
+            <h2><a href="https://globe.adsb.fi/?icao={{item[1]}}&showTrace={{item[2]}}" , target="_blank">{{item[0]}}</a> -
+                {{item[2]}}</h2>
+            <p>First seen: {{item[3][0]}} UTC at {{item[3][1]}}</p>
+            <p>Last seen: {{item[4][0]}} UTC at {{item[4][1]}}</p>
+        </div>
 
     {% endfor %}
 
@@ -96,7 +98,7 @@
             <p style="text-align: center;"><a href="/?pg={{page-1}}">Prev</a> Page {{page + 1}} of {{total + 1}} <a>Next</a></p>
         {% else %}
             <p style="text-align: center;"><a href="/?pg={{page-1}}">Prev</a> Page {{page + 1}} of {{total + 1}} <a
-                    href="/?pg={{page+1}}">Next</a></p>
+                href="/?pg={{page+1}}">Next</a></p>
         {% endif %}
     </div>
 

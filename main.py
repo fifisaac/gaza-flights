@@ -4,11 +4,13 @@ import json
 from time import sleep
 import datetime
 
-reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507']
+reg = ['ZZ416', 'ZZ418', 'ZZ419', 'ZZ504', 'ZZ507', 'N6147U']
 bbox = [[34.63, 32.820], [30.92, 34.66]]
 
 app = Flask(__name__)
 
+# Homepage route
+# Returns 10 items at a time with reg, icao, locations and times
 @app.route('/')
 def index():
 
@@ -22,13 +24,17 @@ def index():
         f.seek(0)
         file = json.loads(f.read())
 
-        items = []
+        items = [] #array to contain registration and icao code, first sighting and last sighting
+
         flights = file["flights"][::-1]
         for i in flights[(page * 10): (10 + page * 10)]:
             reg = i['reg']
             icao = i['icao']
+
+            # Date in format YYYY-MM-DD
             date = datetime.datetime.utcfromtimestamp(i['locs'][0]['time']/1000).strftime('%Y-%m-%d')
 
+            # Function to produce time in format YYYY-MM-DD hh:mm:ss
             convertTime = lambda time: datetime.datetime.utcfromtimestamp(time/1000).strftime('%Y-%m-%d %H:%M:%S')
 
             first = [convertTime(i['locs'][0]['time']), f'''{i['locs'][0]['lat']}, {i['locs'][0]['lon']}''']
@@ -84,20 +90,22 @@ def check():
                     # Checks if there is an existing flight with same reg and within 21000000ms (approx 6hrs)
                     if (flights[-j]["reg"] == i) and (flights[-j]['locs'][-1]["time"] + 21000000 >= time):
                         newFlight = False
-                        flights[-j]['locs'].append({'lat': rjson['ac'][0]['lat'],
-                                            'lon': rjson['ac'][0]['lon'],
+                        flights[-j]['locs'].append({'lat': lat,
+                                            'lon': lon,
                                             'time': time})
                         break
                         
                 if newFlight:
+
+                    # Checks coordinates are within defined region (bbox)
                     if (lat <= bbox[0][0] and lat >= bbox[1][0]) and (lon >= bbox[0][1] and lon <= bbox[1][1]):
                         flights.append({
                                         "reg": i,
                                         "icao": rjson['ac'][0]['hex'],
                                         "locs": [
                                             {
-                                                "lat": rjson['ac'][0]['lat'],
-                                                "lon": rjson['ac'][0]['lon'],
+                                                "lat": lat,
+                                                "lon": lon,
                                                 "time": time
                                             }
                                             ]
